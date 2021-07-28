@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Employee } from './employee';
+import { FormsModule } from '@angular/forms';
 import { EmployeeService } from './employee.service';
 
 @Component({
@@ -14,7 +15,9 @@ export class AppComponent implements OnInit{
   public editEmployee: Employee;
   public deleteEmployee: Employee;
 
-  constructor(private employeeService: EmployeeService){}
+  constructor(private employeeService: EmployeeService){  
+      this.employees = [];
+  }
 
   ngOnInit(): void {
     this.getEmployees();
@@ -23,6 +26,7 @@ export class AppComponent implements OnInit{
     this.employeeService.getEmployees().subscribe(
       (response: Employee[])=>{
         this.employees = response;
+        console.log(this.employees);
       },
       (error: HttpErrorResponse)=>{
         alert(error.message);
@@ -32,8 +36,8 @@ export class AppComponent implements OnInit{
 
    public searchEmployees(key: string):void{
      const results: Employee[] = [];
-     for(const employee of this.employees){
-       if (employee.name.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.email.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.phoneNumber.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.phoneNumber.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1){
+     for( const employee of this.employees ){
+       if ( employee.name.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.email.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.phone.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 || employee.phone.toLocaleLowerCase().indexOf(key.toLowerCase()) != -1 ){
          results.push(employee);
        }
      }
@@ -80,12 +84,12 @@ export class AppComponent implements OnInit{
        }
     );
   }
-  public onOpenModal(employee: Employee, mode: string):void{
+  public onOpenModal(employee: Employee | null, mode: string):void{
     const container = document.getElementById('main-container');
     const button = document.createElement('button');
     button.type = 'button';
     button.style.display = 'none';
-    button.setAttribute('data-target','modal');
+    button.setAttribute('data-toggle','modal');
     if( mode === 'add'){
       button.setAttribute('data-target', '#addEmployeeModel');
     }
